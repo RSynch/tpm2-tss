@@ -32,6 +32,7 @@
 #include "util/log.h"
 #include "sapi-util.h"
 #include "test.h"
+#include "tss2-tcti/tcti-device.h"
 
 
 /* Test copmmand cancel functionality.
@@ -81,6 +82,10 @@ test_invoke (TSS2_SYS_CONTEXT *sapi_context)
         exit(1);
     }
     LOG_DEBUG("GetTctiContext SUCCESS!");
+    if (TSS2_TCTI_MAGIC(tcti_context) == TCTI_DEVICE_MAGIC) {
+        LOG_DEBUG("tcti_context not suitable for the command! Skipping test");
+        exit(77);
+    }
 
     rc = create_primary_rsa_2048_aes_128_cfb (sapi_context, &handle);
     if (rc != TPM2_RC_SUCCESS) {
